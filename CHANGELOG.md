@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/Silthus/config-mapper/compare/v1.0.2...v1.1.0) (2020-12-07)
+
+
+### Features
+
+* **docs:** add javadocs to the entrypoint ([8e35993](https://github.com/Silthus/config-mapper/commit/8e3599354d854f49c98164e7b79664adaf30821a))
+
 ## [1.0.2](https://github.com/Silthus/config-mapper/compare/v1.0.1...v1.0.2) (2020-12-07)
 
 
