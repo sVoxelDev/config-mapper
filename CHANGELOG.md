@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/Silthus/config-mapper/compare/v1.1.1...v1.1.2) (2020-12-07)
+
+
+### Bug Fixes
+
+* **release:** set jitpack to jre11 ([728d5e8](https://github.com/Silthus/config-mapper/commit/728d5e8bf02e3408e0ccc5a55b339f867b20aa36))
+
 ## [1.1.1](https://github.com/Silthus/config-mapper/compare/v1.1.0...v1.1.1) (2020-12-07)
 
 
