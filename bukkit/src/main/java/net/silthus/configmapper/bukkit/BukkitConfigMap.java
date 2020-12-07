@@ -19,22 +19,22 @@ import java.util.stream.Stream;
 @EqualsAndHashCode(callSuper = true)
 public class BukkitConfigMap extends DefaultConfigMap {
 
-    static BukkitConfigMap of(Class<?> configClass) throws ConfigurationException {
+    public static BukkitConfigMap of(Class<?> configClass) throws ConfigurationException {
 
         return of(ConfigUtil.getConfigFields(configClass));
     }
 
-    static <TConfig> BukkitConfigMap of(Class<TConfig> configClass, Supplier<TConfig> supplier) throws ConfigurationException {
+    public static <TConfig> BukkitConfigMap of(Class<TConfig> configClass, Supplier<TConfig> supplier) throws ConfigurationException {
 
         return of(ConfigUtil.getConfigFields(configClass, supplier.get()));
     }
 
-    static <TConfig> BukkitConfigMap of(TConfig config) throws ConfigurationException {
+    public static <TConfig> BukkitConfigMap of(TConfig config) throws ConfigurationException {
 
         return of(ConfigUtil.getConfigFields(config));
     }
 
-    static BukkitConfigMap of(Map<String, ConfigFieldInformation> configFields) {
+    public static BukkitConfigMap of(Map<String, ConfigFieldInformation> configFields) {
         return new BukkitConfigMap(configFields);
     }
 
