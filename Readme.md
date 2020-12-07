@@ -29,7 +29,7 @@ repositories {
 }
 
 dependencies {
-    implementation group: 'net.silthus', name: 'config-mapper', version: '1.0.2'
+    implementation group: 'net.silthus.config-mapper', name: 'core', version: '1.0.1'
 }
 ```
 
@@ -45,9 +45,9 @@ dependencies {
     </repositories>
     <dependencies>
         <dependency>
-            <groupId>net.silthus</groupId>
-            <artifactId>config-mapper</artifactId>
-            <version>1.0.2</version>
+            <groupId>net.silthus.config-mapper</groupId>
+            <artifactId>core</artifactId>
+            <version>1.0.1</version>
         </dependency>
     </dependencies>
 </project>
