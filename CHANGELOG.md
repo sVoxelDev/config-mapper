@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/Silthus/config-mapper/compare/v1.1.0...v1.1.1) (2020-12-07)
+
+
+### Bug Fixes
+
+* **bukkit:** make BukkitConfigMap public visible ([0f0eef8](https://github.com/Silthus/config-mapper/commit/0f0eef811579ff3db65e39115f6180e7054ec53f))
+
 # [1.1.0](https://github.com/Silthus/config-mapper/compare/v1.0.2...v1.1.0) (2020-12-07)
 
 
