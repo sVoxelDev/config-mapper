@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/Silthus/config-mapper/compare/v1.0.1...v1.0.2) (2020-12-07)
+
+
+### Bug Fixes
+
+* **release:** change group id of bukkit project ([634eb6b](https://github.com/Silthus/config-mapper/commit/634eb6b5f307f4cd013d7dfa33c76acbca5ab507))
+
 ## [1.0.1](https://github.com/Silthus/config-mapper/compare/v1.0.0...v1.0.1) (2020-12-07)
 
 
