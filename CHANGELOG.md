@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/Silthus/config-mapper/compare/v1.0.0...v1.0.1) (2020-12-07)
+
+
+### Bug Fixes
+
+* **release:** commit correct readme into release tag ([62dd592](https://github.com/Silthus/config-mapper/commit/62dd592e81877a776861625f9618d46e1f9e3f34))
+
 # 1.0.0 (2020-12-07)
 
 
