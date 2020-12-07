@@ -8,74 +8,83 @@ buildscript {
 plugins {
     id 'com.github.johnrengelman.shadow' version '6.1.0'
     id 'io.freefair.lombok' version '5.3.0'
-    id 'java'
+    id 'java-library'
     id 'jacoco'
     id 'idea'
 }
 
-apply from: "$rootDir/gradle/jacoco.gradle"
-apply from: "$rootDir/gradle/publish.gradle"
+allprojects {
 
-if (project.hasProperty("local_script")) {
-    apply from: file(local_script + "/build.local.gradle")
-}
+    apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: 'io.freefair.lombok'
+    apply plugin: 'java-library'
+    apply plugin: 'jacoco'
+    apply plugin: 'idea'
 
-sourceCompatibility = 11
-targetCompatibility = 11
+    apply from: "$rootDir/gradle/jacoco.gradle"
+    apply from: "$rootDir/gradle/publish.gradle"
 
-group project.property("group")
+    if (project.hasProperty("local_script")) {
+        apply from: file(local_script + "/build.local.gradle")
+    }
 
-compileJava {
-    options.encoding = 'UTF-8'
-    options.compilerArgs += ["-parameters"]
-    options.fork = true
-    options.forkOptions.executable = 'javac'
-}
+    sourceCompatibility = 11
+    targetCompatibility = 11
 
-repositories {
-    mavenCentral()
-    jcenter()
-    maven { url = 'https://jitpack.io' }
-}
+    group project.property("group")
 
-dependencies {
-    //Add dependencies here
-    implementation group: "com.google.guava", name: "guava", version: "29.0-jre"
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
-    implementation group: 'org.reflections', name: 'reflections', version: '0.9.12'
+    compileJava {
+        options.encoding = 'UTF-8'
+        options.compilerArgs += ["-parameters"]
+        options.fork = true
+        options.forkOptions.executable = 'javac'
+    }
 
-    //Test dependencies
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.+'
-    testImplementation "org.mockito:mockito-core:3.+"
-    testImplementation 'org.assertj:assertj-core:3.+'
-}
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven { url = 'https://jitpack.io' }
+    }
 
-shadowJar {
-    classifier = ''
     dependencies {
-        include(dependency('com.google.guava:guava:'))
-        include(dependency('org.apache.commons:commons-lang3:'))
-        include(dependency('org.reflections:reflections:'))
+        //Add dependencies here
+        implementation group: "com.google.guava", name: "guava", version: "29.0-jre"
+        implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
+        implementation group: 'org.reflections', name: 'reflections', version: '0.9.12'
+
+        //Test dependencies
+        testImplementation 'org.junit.jupiter:junit-jupiter:5.+'
+        testImplementation "org.mockito:mockito-core:3.+"
+        testImplementation 'org.assertj:assertj-core:3.+'
     }
-    relocate 'org.apache.commons', "shadow.net.silthus.configmapper.commonslang"
-    relocate 'com.google', "shadow.net.silthus.configmapper.guava"
-    relocate 'org.reflections', "shadow.net.silthus.configmapper.reflections"
-}
 
-tasks.build.dependsOn(shadowJar)
-tasks.publish.dependsOn(shadowJar)
-
-test {
-    useJUnitPlatform()
-    testLogging {
-        events "passed", "skipped", "failed"
+    shadowJar {
+        classifier = ''
+        dependencies {
+            include(dependency('com.google.guava:guava:'))
+            include(dependency('org.apache.commons:commons-lang3:'))
+            include(dependency('org.reflections:reflections:'))
+        }
+        relocate 'org.apache.commons', "shadow.net.silthus.configmapper.commonslang"
+        relocate 'com.google', "shadow.net.silthus.configmapper.guava"
+        relocate 'org.reflections', "shadow.net.silthus.configmapper.reflections"
     }
-    ignoreFailures = false
-}
 
-processResources {
-    project.properties.put("version", this.version)
-    expand project.properties
-}
+    tasks.build.dependsOn(shadowJar)
+    tasks.publish.dependsOn(shadowJar)
 
-defaultTasks 'build'
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events "passed", "skipped", "failed"
+        }
+        ignoreFailures = false
+    }
+
+    processResources {
+        project.properties.put("version", this.version)
+        expand project.properties
+    }
+
+    defaultTasks 'build'
+}

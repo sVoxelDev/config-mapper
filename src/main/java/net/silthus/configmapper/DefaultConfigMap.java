@@ -22,6 +22,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Value;
 import lombok.experimental.Accessors;
+import lombok.experimental.NonFinal;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Value
+@NonFinal
 @Accessors(fluent = true)
 public class DefaultConfigMap implements ConfigMap {
 
@@ -41,12 +43,12 @@ public class DefaultConfigMap implements ConfigMap {
     @Getter
     List<KeyValuePair> keyValuePairs;
 
-    public DefaultConfigMap(Map<String, ConfigFieldInformation> configFields) {
+    protected DefaultConfigMap(Map<String, ConfigFieldInformation> configFields) {
         this.configFields = ImmutableMap.copyOf(configFields);
         this.keyValuePairs = ImmutableList.of();
     }
 
-    DefaultConfigMap(Map<String, ConfigFieldInformation> configFields, List<KeyValuePair> keyValuePairs) {
+    protected DefaultConfigMap(Map<String, ConfigFieldInformation> configFields, List<KeyValuePair> keyValuePairs) {
         this.configFields = ImmutableMap.copyOf(configFields);
         this.keyValuePairs = ImmutableList.copyOf(keyValuePairs);
     }

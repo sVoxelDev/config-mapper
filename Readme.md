@@ -15,6 +15,7 @@ An example of this is the [art-framework](https://art-framework.io) which uses t
   * [Gradle](#gradle)
   * [Maven](#maven)
 * [Usage](#usage)
+* [Bukkit Mapper](#bukkit-mapper)
 
 ## As a Dependency
 
@@ -86,4 +87,40 @@ public static class YourClass {
     @ConfigOption(required = true)
     private double secondKey;
 }
+```
+
+## Bukkit Mapper
+
+You can use this project to map `ConfigurationSection` configs into your object. You need to depend on the subproject `net.silthus.config-mapper:bukkit` and shade it into your plugin.
+
+Then use the `BukkitConfigMap.of(...)` methods instead of the `ConfigMap` to create your config. This will provide you with a new method `with(ConfigurationSection)` to fetch values from your config.
+
+```java
+    @SneakyThrows
+    @Test
+    @DisplayName("should map configuration section to object")
+    void shouldMapConfigSectionToObject() {
+
+        MemoryConfiguration config = new MemoryConfiguration();
+        config.set("required", "foobar");
+        config.set("val", 10);
+
+        BukkitConfig result = BukkitConfigMap.of(BukkitConfig.class)
+                .with(config)
+                .applyTo(new BukkitConfig());
+
+        assertThat(result).extracting(
+                BukkitConfig::getRequired,
+                BukkitConfig::getVal
+        ).contains("foobar", 10);
+    }
+
+    @Data
+    public static class BukkitConfig {
+
+        @ConfigOption(required = true)
+        private String required;
+        @ConfigOption
+        private int val = 5;
+    }
 ```

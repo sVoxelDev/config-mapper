@@ -1,0 +1,17 @@
+repositories {
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+}
+
+dependencies {
+    api project(':')
+
+    implementation 'org.spigotmc:spigot-api:1.16.4-R0.1-SNAPSHOT'
+}
+
+shadowJar {
+    classifier = ''
+    dependencies {
+        include(project(':'))
+    }
+}
