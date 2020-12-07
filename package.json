@@ -41,7 +41,7 @@
           "assets": [
             "gradle.properties",
             "CHANGELOG.md",
-            "README.md"
+            "Readme.md"
           ]
         }
       ]
