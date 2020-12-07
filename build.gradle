@@ -7,7 +7,6 @@ buildscript {
 
 plugins {
     id 'com.github.johnrengelman.shadow' version '6.1.0'
-    id 'kr.entree.spigradle' version '2.2.3'
     id 'io.freefair.lombok' version '5.3.0'
     id 'java'
     id 'jacoco'
@@ -24,19 +23,7 @@ if (project.hasProperty("local_script")) {
 sourceCompatibility = 11
 targetCompatibility = 11
 
-ext {
-    mcVersion = project.property("mcVersion")
-}
-
 group project.property("group")
-
-spigot {
-    name = project.property("pluginName")
-    authors = [project.property("author")]
-    apiVersion = project.property("apiVersion")
-    load = STARTUP
-    //    depends = ['']
-}
 
 compileJava {
     options.encoding = 'UTF-8'
@@ -45,39 +32,38 @@ compileJava {
     options.forkOptions.executable = 'javac'
 }
 
-archivesBaseName = project.property("pluginName")
-
 repositories {
     mavenCentral()
     jcenter()
-    spigot()
     maven { url = 'https://jitpack.io' }
 }
 
 dependencies {
-    compileOnly spigot(mcVersion)
-
     //Add dependencies here
+    implementation group: "com.google.guava", name: "guava", version: "29.0-jre"
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
+    implementation group: 'org.reflections', name: 'reflections', version: '0.9.12'
 
     //Test dependencies
     testImplementation 'org.junit.jupiter:junit-jupiter:5.+'
     testImplementation "org.mockito:mockito-core:3.+"
-    testImplementation mockBukkit()
     testImplementation 'org.assertj:assertj-core:3.+'
 }
 
 shadowJar {
     classifier = ''
-//    dependencies {
-//        include(dependency('co.aikar:acf-paper:0.5.0-SNAPSHOT'))
-//    }
-//    relocate 'co.aikar.commands', "${packageName}.acf"
-//    relocate 'co.aikar.locales', "${packageName}.locales"
+    dependencies {
+        include(dependency('com.google.guava:guava:'))
+        include(dependency('org.apache.commons:commons-lang3:'))
+        include(dependency('org.reflections:reflections:'))
+    }
+    relocate 'org.apache.commons', "shadow.net.silthus.configmapper.commonslang"
+    relocate 'com.google', "shadow.net.silthus.configmapper.guava"
+    relocate 'org.reflections', "shadow.net.silthus.configmapper.reflections"
 }
 
 tasks.build.dependsOn(shadowJar)
 tasks.publish.dependsOn(shadowJar)
-tasks.prepareSpigotPlugins.dependsOn(shadowJar)
 
 test {
     useJUnitPlatform()
