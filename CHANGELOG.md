@@ -1,3 +1,10 @@
+## [1.1.4](https://github.com/Silthus/config-mapper/compare/v1.1.3...v1.1.4) (2020-12-19)
+
+
+### Bug Fixes
+
+* map primitive type to string and back ([6ac9d0b](https://github.com/Silthus/config-mapper/commit/6ac9d0b642fe3643d9837a9b739db9a1e70f1440))
+
 ## [1.1.3](https://github.com/Silthus/config-mapper/compare/v1.1.2...v1.1.3) (2020-12-19)
 
 
