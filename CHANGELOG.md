@@ -1,3 +1,11 @@
+## [1.1.3](https://github.com/Silthus/config-mapper/compare/v1.1.2...v1.1.3) (2020-12-19)
+
+
+### Bug Fixes
+
+* cast field value to type before setting it and catch all exceptions ([7d3bdb2](https://github.com/Silthus/config-mapper/commit/7d3bdb28b5d19c109b7ea427dd1a319deb28e11f))
+* convert object to primitive type if needed ([82cfa06](https://github.com/Silthus/config-mapper/commit/82cfa0612e64169302558e7191af9b638473111c))
+
 ## [1.1.2](https://github.com/Silthus/config-mapper/compare/v1.1.1...v1.1.2) (2020-12-07)
 
 
