@@ -37,6 +37,8 @@ public final class ReflectionUtil {
 
         if (value instanceof String) {
             return (TValue) fromString(fieldType, (String) value);
+        } else if (value.getClass().isPrimitive() || fieldType.isPrimitive()) {
+            return (TValue) fromString(fieldType, "" + value);
         }
 
         return (TValue) value;

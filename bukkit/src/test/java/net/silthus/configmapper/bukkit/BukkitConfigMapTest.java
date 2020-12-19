@@ -18,7 +18,7 @@ class BukkitConfigMapTest {
 
         MemoryConfiguration config = new MemoryConfiguration();
         config.set("required", "foobar");
-        config.set("val", 10);
+        config.set("val", 10L);
 
         BukkitConfig result = BukkitConfigMap.of(BukkitConfig.class)
                 .with(config)
