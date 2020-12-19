@@ -98,7 +98,7 @@ public class DefaultConfigMap implements ConfigMap {
             } else {
                 Field field = config.getClass().getDeclaredField(fieldInformation.name());
                 field.setAccessible(true);
-                field.set(config, fieldInformation.type().cast(value));
+                field.set(config, ReflectionUtil.toObject(fieldInformation.type(), value));
             }
         } catch (Exception e) {
             e.printStackTrace();
