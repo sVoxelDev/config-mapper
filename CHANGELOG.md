@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/Silthus/config-mapper/compare/v1.1.4...v1.2.0) (2021-03-02)
+
+
+### Features
+
+* make the ConfigurationException a RuntimeException ([a90bb15](https://github.com/Silthus/config-mapper/commit/a90bb15410ea76a21601d890f8aaae1144ba686d))
+
 ## [1.1.4](https://github.com/Silthus/config-mapper/compare/v1.1.3...v1.1.4) (2020-12-19)
 
 
