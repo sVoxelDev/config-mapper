@@ -51,7 +51,7 @@ public interface ConfigMap {
      * @throws ConfigurationException if the class cannot be instantiated (e.g. no public constructor)
      *                                or if a mapping failed
      */
-    static ConfigMap of(Class<?> configClass) throws ConfigurationException {
+    static ConfigMap of(Class<?> configClass) {
 
         return of(ConfigUtil.getConfigFields(configClass));
     }
@@ -68,29 +68,77 @@ public interface ConfigMap {
      * @throws ConfigurationException if the config class contains invalid field mappings
      * @see #of(Class)
      */
-    static <TConfig> ConfigMap of(Class<TConfig> configClass, Supplier<TConfig> supplier) throws ConfigurationException {
+    static <TConfig> ConfigMap of(Class<TConfig> configClass, Supplier<TConfig> supplier) {
 
         return of(ConfigUtil.getConfigFields(configClass, supplier.get()));
     }
 
-    static <TConfig> ConfigMap of(TConfig config) throws ConfigurationException {
+    /**
+     * Creates a new ConfigMap using the provided config instance to map field default values.
+     * <p>No new instance of the config will be created by this method.
+     *
+     * @param config the config object that should be scanned for config fields
+     * @param <TConfig> the type of the config
+     * @return the config map for the given config object
+     */
+    static <TConfig> ConfigMap of(TConfig config) {
 
         return of(ConfigUtil.getConfigFields(config));
     }
 
+    /**
+     * Creates a new ConfigMap from a pre-existing set of mapped config fields.
+     * <p>Such {@link ConfigFieldInformation} map is created with the {@link ConfigUtil} class
+     * and implicitly by the other static creation methods in this class.
+     *
+     * @param configFields the field to config field information map
+     * @return the config map that was created from the given config field map
+     */
     static ConfigMap of(Map<String, ConfigFieldInformation> configFields) {
         return new DefaultConfigMap(configFields);
     }
 
-    <TConfig> TConfig applyTo(@NonNull TConfig config) throws ConfigurationException;
-
+    /**
+     * @return an immutable map of all field names to config fields mapping in this config map
+     */
     Map<String, ConfigFieldInformation> configFields();
 
+    /**
+     * @return an immutable list of all key value pairs in this config map
+     */
     List<KeyValuePair> keyValuePairs();
 
+    /**
+     * @return true if values have been provided to this config map
+     */
     boolean loaded();
 
-    ConfigMap with(@NonNull Collection<KeyValuePair> keyValuePairs);
+    /**
+     * Applies all mapping information and values in this config map to the given configuration object.
+     * <p>Only the default values will be applied if {@link #with(KeyValuePair...)} was not called yet.
+     * <p>Any nested objects that are marked as {@link ConfigOption} will be injected recursively.
+     *
+     * @param config the config to apply the values to
+     * @param <TConfig> the type of the config
+     * @return the same config instance but with the injected config values
+     */
+    <TConfig> TConfig applyTo(@NonNull TConfig config);
 
+    /**
+     * Provides this config map with the given values.
+     * <p>Use a provided sub package, like the bukkit implementation to parse a config into a list of key value pairs.
+     *
+     * @param pairs the key value pairs that should be mapped to this config
+     * @return a new config map with the given values
+     */
+    ConfigMap with(@NonNull Collection<KeyValuePair> pairs);
+
+    /**
+     * Provides this config map with the given values.
+     * <p>Use a provided sub package, like the bukkit implementation to parse a config into a list of key value pairs.
+     *
+     * @param pairs the key value pairs that should be mapped to this config
+     * @return a new config map with the given values
+     */
     ConfigMap with(@NonNull KeyValuePair... pairs);
 }

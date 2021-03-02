@@ -38,9 +38,7 @@ import java.util.stream.Stream;
 @Accessors(fluent = true)
 public class DefaultConfigMap implements ConfigMap {
 
-    @Getter
     Map<String, ConfigFieldInformation> configFields;
-    @Getter
     List<KeyValuePair> keyValuePairs;
 
     protected DefaultConfigMap(Map<String, ConfigFieldInformation> configFields) {
@@ -51,6 +49,16 @@ public class DefaultConfigMap implements ConfigMap {
     protected DefaultConfigMap(Map<String, ConfigFieldInformation> configFields, List<KeyValuePair> keyValuePairs) {
         this.configFields = ImmutableMap.copyOf(configFields);
         this.keyValuePairs = ImmutableList.copyOf(keyValuePairs);
+    }
+
+    public Map<String, ConfigFieldInformation> configFields() {
+
+        return Map.copyOf(configFields);
+    }
+
+    public List<KeyValuePair> keyValuePairs() {
+
+        return List.copyOf(keyValuePairs);
     }
 
     @Override
@@ -67,9 +75,9 @@ public class DefaultConfigMap implements ConfigMap {
     }
 
     @Override
-    public ConfigMap with(@NonNull Collection<KeyValuePair> keyValuePairs) {
+    public ConfigMap with(@NonNull Collection<KeyValuePair> pairs) {
 
-        List<KeyValuePair> values = Stream.concat(keyValuePairs().stream(), keyValuePairs.stream())
+        List<KeyValuePair> values = Stream.concat(keyValuePairs().stream(), pairs.stream())
                 .distinct()
                 .collect(Collectors.toList());
         return new DefaultConfigMap(configFields(), values);

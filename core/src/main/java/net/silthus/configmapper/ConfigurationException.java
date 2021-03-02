@@ -16,7 +16,7 @@
 
 package net.silthus.configmapper;
 
-public class ConfigurationException extends Exception {
+public class ConfigurationException extends RuntimeException {
 
     public ConfigurationException(String message) {
         super(message);
