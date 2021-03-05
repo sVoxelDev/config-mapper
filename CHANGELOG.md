@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/Silthus/config-mapper/compare/v1.2.0...v1.2.1) (2021-03-05)
+
+
+### Bug Fixes
+
+* deeply nested config fields not parsed ([a12057d](https://github.com/Silthus/config-mapper/commit/a12057da6201861343905eca9107938a3b0e3f06))
+
 # [1.2.0](https://github.com/Silthus/config-mapper/compare/v1.1.4...v1.2.0) (2021-03-02)
 
 
