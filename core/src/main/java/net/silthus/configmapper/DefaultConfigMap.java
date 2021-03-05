@@ -99,12 +99,18 @@ public class DefaultConfigMap implements ConfigMap {
             if (fieldInformation.identifier().contains(".")) {
                 // handle nested config objects
                 String nestedIdentifier = StringUtils.substringBefore(fieldInformation.identifier(), ".");
-                Field parentField = config.getClass().getDeclaredField(nestedIdentifier);
+                Field parentField = ReflectionUtil.getDeclaredField(config.getClass(), nestedIdentifier)
+                        .orElseThrow(() -> new NoSuchFieldException(fieldInformation.name()));
                 parentField.setAccessible(true);
                 Object nestedConfigObject = parentField.get(config);
-                setConfigField(nestedConfigObject, fieldInformation.withIdentifier(nestedIdentifier), value);
+                setConfigField(
+                        nestedConfigObject,
+                        fieldInformation.withIdentifier(StringUtils.substringAfter(fieldInformation.identifier(), ".")),
+                        value
+                );
             } else {
-                Field field = config.getClass().getDeclaredField(fieldInformation.name());
+                Field field = ReflectionUtil.getDeclaredField(config.getClass(), fieldInformation.name())
+                        .orElseThrow(() -> new NoSuchFieldException(fieldInformation.name()));
                 field.setAccessible(true);
                 field.set(config, ReflectionUtil.toObject(fieldInformation.type(), value));
             }

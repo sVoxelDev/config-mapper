@@ -20,7 +20,12 @@ import com.google.common.base.Strings;
 import lombok.extern.java.Log;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -90,5 +95,55 @@ public final class ReflectionUtil {
         }
 
         return array;
+    }
+
+    /**
+     * Recursively searches the given class and all of its super classes for a field with the given name.
+     *
+     * @param type the class that should be searched
+     * @param name the name of the field
+     * @return the field or an empty optional
+     */
+    public static Optional<Field> getDeclaredField(Class<?> type, String name) {
+
+        return getAllFields(type, new ArrayList<>()).stream()
+                .filter(field -> field.getName().equals(name))
+                .findFirst();
+    }
+
+    /**
+     * Recursively gets all fields from the given class and its superclasses.
+     *
+     * @param type the class that should be searched
+     * @param fields the list to store the fields in. provide an empty array list to start.
+     * @return the list of fields from the given class and its superclasses
+     */
+    public static List<Field> getAllFields(Class<?> type, List<Field> fields) {
+
+        fields.addAll(Arrays.asList(type.getDeclaredFields()));
+
+        if (type.getSuperclass() != null) {
+            getAllFields(type.getSuperclass(), fields);
+        }
+
+        return fields;
+    }
+
+    /**
+     * Recursively gets all methods from the given class and its superclass.
+     *
+     * @param type the class that should be searched
+     * @param methods the list to store the result in. provide an empty list to start with.
+     * @return a list of all methods of the class and its superclasses
+     */
+    public static List<Method> getAllMethods(Class<?> type, List<Method> methods) {
+
+        methods.addAll(Arrays.asList(type.getDeclaredMethods()));
+
+        if (type.getSuperclass() != null) {
+            getAllMethods(type.getSuperclass(), methods);
+        }
+
+        return methods;
     }
 }

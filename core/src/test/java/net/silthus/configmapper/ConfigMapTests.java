@@ -122,6 +122,18 @@ public class ConfigMapTests {
         }
 
         @Test
+        @DisplayName("should load deeply nested fields including superclass")
+        void shouldLoadDeeplyNestedFields() {
+
+            assertThatCode(() -> assertThat(ConfigUtil.getConfigFields(SubClassWithParentFields.class))
+                    .containsKeys(
+                            "sub.duration",
+                            "sub.annotated.foo"
+                    )
+            ).doesNotThrowAnyException();
+        }
+
+        @Test
         @DisplayName("should load required annotation")
         public void shouldLoadRequiredAttribute() {
 
@@ -238,6 +250,34 @@ public class ConfigMapTests {
                     .containsOnlyKeys("foo", "array")
             ).doesNotThrowAnyException();
         }
+
+        @Test
+        @DisplayName("should load and set properties in abstract base class")
+        void shouldLoadPropertyFromBaseClass() {
+
+            SubClass subClass = ConfigMap.of(SubClass.class)
+                    .with(KeyValuePair.of("duration", 30))
+                    .applyTo(new SubClass());
+
+            assertThat(subClass.getDuration())
+                    .isEqualTo(30);
+        }
+
+        @Test
+        @DisplayName("should load and set properties from deeply nested sub classes")
+        void shouldLoadPropertyFromDeeplyNestedSubClass() {
+
+            SubClassWithParentFields cfg = ConfigMap.of(SubClassWithParentFields.class)
+                    .with(
+                            KeyValuePair.of("sub.duration", 30),
+                            KeyValuePair.of("sub.annotated.foo", 100)
+                    )
+                    .applyTo(new SubClassWithParentFields());
+
+            assertThat(cfg)
+                    .extracting(config -> config.sub.getDuration(), config -> config.sub.annotated.foo)
+                    .contains(30, 100);
+        }
     }
 
     public static class SamePositionConfig {
@@ -328,5 +368,24 @@ public class ConfigMapTests {
         private TestConfig test = new TestConfig();
 
         private double ignored = 1.0;
+    }
+
+    @Data
+    public static abstract class AbstractBaseClass {
+
+        @ConfigOption
+        private int duration = 10;
+    }
+
+    public static class SubClass extends AbstractBaseClass {
+
+        @ConfigOption
+        private AnnotatedClass annotated = new AnnotatedClass();
+    }
+
+    public static class SubClassWithParentFields {
+
+        @ConfigOption
+        private SubClass sub = new SubClass();
     }
 }
