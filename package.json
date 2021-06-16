@@ -8,7 +8,7 @@
     "@semantic-release/exec": "5.0.0",
     "conventional-changelog-conventionalcommits": "4.5.0",
     "gradle-semantic-release-plugin": "1.4.22",
-    "semantic-release": "17.4.3"
+    "semantic-release": "17.4.4"
   },
   "scripts": {
     "semantic-release": "npx semantic-release"
