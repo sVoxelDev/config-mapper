@@ -1,2 +1,5 @@
 jdk:
-  - openjdk17
+  - openjdk16
+before_install:
+  - echo "Before Install"
+  - bash ensure-java-16 install
