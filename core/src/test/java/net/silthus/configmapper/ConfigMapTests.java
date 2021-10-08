@@ -280,6 +280,40 @@ public class ConfigMapTests {
         }
     }
 
+    @Nested
+    @DisplayName("with Enum")
+    public class ConfigWithEnum {
+
+        @Test
+        void loadConfigWithEnum() {
+
+            EnumTestConfig config = ConfigMap.of(EnumTestConfig.class)
+                    .with(KeyValuePair.of("my_enum", "TEST"))
+                    .applyTo(new EnumTestConfig());
+
+            assertThat(config.myEnum).isEqualTo(MyEnum.TEST);
+        }
+
+        @Test
+        void loadConfigWithLowerCaseEnum() {
+            EnumTestConfig config = ConfigMap.of(EnumTestConfig.class)
+                    .with(KeyValuePair.of("my_enum", "prod"))
+                    .applyTo(new EnumTestConfig());
+
+            assertThat(config.myEnum).isEqualTo(MyEnum.PROD);
+        }
+
+        public static class EnumTestConfig {
+            @ConfigOption
+            private MyEnum myEnum;
+        }
+
+        static enum MyEnum {
+            TEST,
+            PROD
+        }
+    }
+
     public static class SamePositionConfig {
 
         @ConfigOption(position = 1)

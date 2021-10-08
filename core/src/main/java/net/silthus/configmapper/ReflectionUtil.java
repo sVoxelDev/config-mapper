@@ -36,10 +36,12 @@ public final class ReflectionUtil {
     // https://regexr.com/59dgv
     private static final Pattern QUOTED_STRING_ARRAY = Pattern.compile("^(\"(?<quoted>.*?)\")?(?<value>.*?)?,(?<rest>.*)$");
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static <TValue> TValue toObject(Class<TValue> fieldType, Object value) {
 
         if (value instanceof String) {
+            if (fieldType.isEnum())
+                return (TValue) fromStringToEnum((Class<? extends Enum>) fieldType, (String) value);
             return (TValue) fromString(fieldType, (String) value);
         } else if (value.getClass().isPrimitive() || fieldType.isPrimitive()) {
             return (TValue) fromString(fieldType, "" + value);
@@ -144,5 +146,12 @@ public final class ReflectionUtil {
         }
 
         return methods;
+    }
+
+    private static <TEnum extends Enum<TEnum>> TEnum fromStringToEnum(Class<TEnum> enumClass, String value) {
+        if (enumClass == null || StringUtils.isNullOrWhiteSpace(value)) {
+            return null;
+        }
+        return Enum.valueOf(enumClass, value.toUpperCase());
     }
 }

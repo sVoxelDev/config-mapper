@@ -81,7 +81,10 @@ public final class ConfigUtil {
                         .filter(s -> !s.trim().isEmpty())
                         .orElse(formatter.apply(field.getName()));
 
-                if (field.getType().isPrimitive() || field.getType().equals(String.class) || field.getType().isArray()) {
+                if (field.getType().isPrimitive()
+                        ||field.getType().isEnum()
+                        || field.getType().equals(String.class)
+                        || field.getType().isArray()) {
 
                     String[] description = configOption.map(ConfigOption::description).orElse(new String[0]);
                     Boolean required = configOption.map(ConfigOption::required).orElse(false);
