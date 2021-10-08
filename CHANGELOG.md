@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/Silthus/config-mapper/compare/v1.2.2...v1.3.0) (2021-10-08)
+
+
+### Features
+
+* upgrade to jdk 17 ([e36ce48](https://github.com/Silthus/config-mapper/commit/e36ce484daad2c4ee5aef9db110c86e982ea9a18))
+
 ## [1.2.2](https://github.com/Silthus/config-mapper/compare/v1.2.1...v1.2.2) (2021-10-08)
 
 
