@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/Silthus/config-mapper/compare/v1.3.6...v1.4.0) (2021-10-08)
+
+
+### Features
+
+* **mapper:** add support for mapping enums from strings ([23b1219](https://github.com/Silthus/config-mapper/commit/23b121945c75c5fcefe8aa592be0155d792275f6))
+
 ## [1.3.6](https://github.com/Silthus/config-mapper/compare/v1.3.5...v1.3.6) (2021-10-08)
 
 
