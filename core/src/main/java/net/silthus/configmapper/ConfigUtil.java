@@ -144,7 +144,10 @@ public final class ConfigUtil {
         if (configFields.isEmpty()) return new HashMap<>();
 
         Map<ConfigFieldInformation, Object> fieldValueMap = new HashMap<>();
-        Set<ConfigFieldInformation> mappedFields = new HashSet<>();
+        Set<ConfigFieldInformation> mappedFields = configFields.values().stream()
+                .filter(ConfigFieldInformation::required)
+                .filter(configFieldInformation -> configFieldInformation.defaultValue() != null)
+                .collect(Collectors.toSet());
 
         boolean usedKeyValue = false;
 
