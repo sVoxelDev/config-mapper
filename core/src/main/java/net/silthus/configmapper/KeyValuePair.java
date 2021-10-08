@@ -19,14 +19,13 @@ package net.silthus.configmapper;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 
 @Value
 @EqualsAndHashCode(of = "key")
 public class KeyValuePair {
 
-    public static KeyValuePair of(@Nullable String key, @Nullable Object value) {
+    public static KeyValuePair of(String key, Object value) {
         return new KeyValuePair(key, value);
     }
 

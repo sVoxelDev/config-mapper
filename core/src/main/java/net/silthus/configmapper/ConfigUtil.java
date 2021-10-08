@@ -16,22 +16,11 @@
 
 package net.silthus.configmapper;
 
-import com.google.common.base.Strings;
 import lombok.NonNull;
 import lombok.extern.java.Log;
-import org.apache.commons.lang3.reflect.FieldUtils;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.lang.reflect.*;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Log(topic = "configmapper")
@@ -89,7 +78,7 @@ public final class ConfigUtil {
                 Optional<ConfigOption> configOption = getConfigOption(field);
 
                 String identifier = basePath + configOption.map(ConfigOption::value)
-                        .filter(s -> !Strings.isNullOrEmpty(s))
+                        .filter(s -> !s.trim().isEmpty())
                         .orElse(formatter.apply(field.getName()));
 
                 if (field.getType().isPrimitive() || field.getType().equals(String.class) || field.getType().isArray()) {

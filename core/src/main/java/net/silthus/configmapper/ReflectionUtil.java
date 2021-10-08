@@ -16,7 +16,6 @@
 
 package net.silthus.configmapper;
 
-import com.google.common.base.Strings;
 import lombok.extern.java.Log;
 
 import java.lang.reflect.Array;
@@ -80,7 +79,7 @@ public final class ReflectionUtil {
                 strings.add(value);
             }
 
-            if (!Strings.isNullOrEmpty(input)) {
+            if (!StringUtils.isNullOrEmpty(input)) {
                 matcher = QUOTED_STRING_ARRAY.matcher(input);
             } else {
                 break;

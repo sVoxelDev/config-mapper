@@ -16,20 +16,13 @@
 
 package net.silthus.configmapper;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import lombok.Getter;
 import lombok.NonNull;
 import lombok.Value;
 import lombok.experimental.Accessors;
 import lombok.experimental.NonFinal;
-import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -42,13 +35,13 @@ public class DefaultConfigMap implements ConfigMap {
     List<KeyValuePair> keyValuePairs;
 
     protected DefaultConfigMap(Map<String, ConfigFieldInformation> configFields) {
-        this.configFields = ImmutableMap.copyOf(configFields);
-        this.keyValuePairs = ImmutableList.of();
+        this.configFields = Map.copyOf(configFields);
+        this.keyValuePairs = List.copyOf(new ArrayList<>());
     }
 
     protected DefaultConfigMap(Map<String, ConfigFieldInformation> configFields, List<KeyValuePair> keyValuePairs) {
-        this.configFields = ImmutableMap.copyOf(configFields);
-        this.keyValuePairs = ImmutableList.copyOf(keyValuePairs);
+        this.configFields = Map.copyOf(configFields);
+        this.keyValuePairs = List.copyOf(keyValuePairs);
     }
 
     public Map<String, ConfigFieldInformation> configFields() {
