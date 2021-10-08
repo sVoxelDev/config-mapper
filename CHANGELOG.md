@@ -1,3 +1,10 @@
+## [1.3.4](https://github.com/Silthus/config-mapper/compare/v1.3.3...v1.3.4) (2021-10-08)
+
+
+### Bug Fixes
+
+* **release:** jitpack execute build instead of gradle ([54f9a75](https://github.com/Silthus/config-mapper/commit/54f9a750133d422c0273028113c9334eae3ab4c8))
+
 ## [1.3.3](https://github.com/Silthus/config-mapper/compare/v1.3.2...v1.3.3) (2021-10-08)
 
 
