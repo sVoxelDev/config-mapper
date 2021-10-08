@@ -1,3 +1,10 @@
+## [1.3.3](https://github.com/Silthus/config-mapper/compare/v1.3.2...v1.3.3) (2021-10-08)
+
+
+### Bug Fixes
+
+* **release:** make gradle wrapper executable ([d16bd1a](https://github.com/Silthus/config-mapper/commit/d16bd1ac2e9be5a1b85fba40e60bf2a0aca2f0f0))
+
 ## [1.3.2](https://github.com/Silthus/config-mapper/compare/v1.3.1...v1.3.2) (2021-10-08)
 
 
