@@ -5,7 +5,7 @@ import lombok.Value;
 import net.silthus.configmapper.ConfigFieldInformation;
 import net.silthus.configmapper.ConfigUtil;
 import net.silthus.configmapper.ConfigurationException;
-import net.silthus.configmapper.DefaultConfigMap;
+import net.silthus.configmapper.ConfigMap;
 import net.silthus.configmapper.KeyValuePair;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
-public class BukkitConfigMap extends DefaultConfigMap {
+public class BukkitConfigMap extends ConfigMap {
 
     public static BukkitConfigMap of(Class<?> configClass) throws ConfigurationException {
 

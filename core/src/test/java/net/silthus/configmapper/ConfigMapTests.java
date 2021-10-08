@@ -328,6 +328,16 @@ public class ConfigMapTests {
         }
     }
 
+    class WithAutoInstance {
+
+        @Test
+        void createInstanceAutomatically() {
+
+            ConfigMap.of(TestConfig.class)
+                    .create();
+        }
+    }
+
     public static class SamePositionConfig {
 
         @ConfigOption(position = 1)

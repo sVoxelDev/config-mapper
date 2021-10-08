@@ -17,11 +17,15 @@
 package net.silthus.configmapper;
 
 import lombok.NonNull;
+import lombok.Value;
+import lombok.experimental.Accessors;
+import lombok.experimental.NonFinal;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The ConfigMap holds information about all fields and their type inside your config class.
@@ -37,7 +41,23 @@ import java.util.function.Supplier;
  *      .applyTo(new MyConfig());
  * }</pre>
  */
-public interface ConfigMap {
+@Value
+@NonFinal
+@Accessors(fluent = true)
+public class ConfigMap {
+
+    Map<String, ConfigFieldInformation> configFields;
+    List<KeyValuePair> keyValuePairs;
+
+    protected ConfigMap(Map<String, ConfigFieldInformation> configFields) {
+        this.configFields = Map.copyOf(configFields);
+        this.keyValuePairs = List.copyOf(new ArrayList<>());
+    }
+
+    protected ConfigMap(Map<String, ConfigFieldInformation> configFields, List<KeyValuePair> keyValuePairs) {
+        this.configFields = Map.copyOf(configFields);
+        this.keyValuePairs = List.copyOf(keyValuePairs);
+    }
 
     /**
      * Tries to fetch all annotated config fields of the given class.
@@ -51,14 +71,14 @@ public interface ConfigMap {
      * @throws ConfigurationException if the class cannot be instantiated (e.g. no public constructor)
      *                                or if a mapping failed
      */
-    static ConfigMap of(Class<?> configClass) {
+    public static ConfigMap of(Class<?> configClass) {
 
         return of(ConfigUtil.getConfigFields(configClass));
     }
 
     /**
      * Creates a new ConfigMap using the given supplier to create the config object.
-     * <p>This is the alternative to the {@link #of(Class)} method that does not require a
+     * <p>This is the alternative to the {@link ConfigMap#of(Class)} method that does not require a
      * public parameterless constructor.
      *
      * @param configClass the config class that should be analyzed for configured fiels
@@ -66,9 +86,9 @@ public interface ConfigMap {
      * @param <TConfig> the type of the config
      * @return a ConfigMap of all fields inside the given class
      * @throws ConfigurationException if the config class contains invalid field mappings
-     * @see #of(Class)
+     * @see ConfigMap#of(Class)
      */
-    static <TConfig> ConfigMap of(Class<TConfig> configClass, Supplier<TConfig> supplier) {
+    public static <TConfig> ConfigMap of(Class<TConfig> configClass, Supplier<TConfig> supplier) {
 
         return of(ConfigUtil.getConfigFields(configClass, supplier.get()));
     }
@@ -81,7 +101,7 @@ public interface ConfigMap {
      * @param <TConfig> the type of the config
      * @return the config map for the given config object
      */
-    static <TConfig> ConfigMap of(TConfig config) {
+    public static <TConfig> ConfigMap of(TConfig config) {
 
         return of(ConfigUtil.getConfigFields(config));
     }
@@ -94,51 +114,75 @@ public interface ConfigMap {
      * @param configFields the field to config field information map
      * @return the config map that was created from the given config field map
      */
-    static ConfigMap of(Map<String, ConfigFieldInformation> configFields) {
-        return new DefaultConfigMap(configFields);
+    public static ConfigMap of(Map<String, ConfigFieldInformation> configFields) {
+        return new ConfigMap(configFields);
     }
 
-    /**
-     * @return an immutable map of all field names to config fields mapping in this config map
-     */
-    Map<String, ConfigFieldInformation> configFields();
+    public Map<String, ConfigFieldInformation> configFields() {
 
-    /**
-     * @return an immutable list of all key value pairs in this config map
-     */
-    List<KeyValuePair> keyValuePairs();
+        return Map.copyOf(configFields);
+    }
 
-    /**
-     * @return true if values have been provided to this config map
-     */
-    boolean loaded();
+    public List<KeyValuePair> keyValuePairs() {
 
-    /**
-     * Applies all mapping information and values in this config map to the given configuration object.
-     * <p>Only the default values will be applied if {@link #with(KeyValuePair...)} was not called yet.
-     * <p>Any nested objects that are marked as {@link ConfigOption} will be injected recursively.
-     *
-     * @param config the config to apply the values to
-     * @param <TConfig> the type of the config
-     * @return the same config instance but with the injected config values
-     */
-    <TConfig> TConfig applyTo(@NonNull TConfig config);
+        return List.copyOf(keyValuePairs);
+    }
 
-    /**
-     * Provides this config map with the given values.
-     * <p>Use a provided sub package, like the bukkit implementation to parse a config into a list of key value pairs.
-     *
-     * @param pairs the key value pairs that should be mapped to this config
-     * @return a new config map with the given values
-     */
-    ConfigMap with(@NonNull Collection<KeyValuePair> pairs);
+    public boolean loaded() {
 
-    /**
-     * Provides this config map with the given values.
-     * <p>Use a provided sub package, like the bukkit implementation to parse a config into a list of key value pairs.
-     *
-     * @param pairs the key value pairs that should be mapped to this config
-     * @return a new config map with the given values
-     */
-    ConfigMap with(@NonNull KeyValuePair... pairs);
+        return !keyValuePairs().isEmpty();
+    }
+
+    public <TConfig> TConfig applyTo(@NonNull TConfig config) throws ConfigurationException {
+        if (!this.loaded()) return config;
+        setConfigFields(config, ConfigUtil.loadConfigValues(configFields(), keyValuePairs()));
+        return config;
+    }
+
+    public <TConfig> TConfig create() {
+        return null;
+    }
+
+    public ConfigMap with(@NonNull Collection<KeyValuePair> pairs) {
+
+        List<KeyValuePair> values = Stream.concat(keyValuePairs().stream(), pairs.stream())
+                .distinct()
+                .collect(Collectors.toList());
+        return new ConfigMap(configFields(), values);
+    }
+
+    public ConfigMap with(@NonNull KeyValuePair... pairs) {
+
+        return with(Arrays.asList(pairs));
+    }
+
+    private void setConfigFields(Object config, Map<ConfigFieldInformation, Object> fieldValueMap) {
+        fieldValueMap.forEach((configFieldInformation, o) -> setConfigField(config, configFieldInformation, o));
+    }
+
+    private void setConfigField(Object config, ConfigFieldInformation fieldInformation, Object value) {
+
+        try {
+            if (fieldInformation.identifier().contains(".")) {
+                // handle nested config objects
+                String nestedIdentifier = StringUtils.substringBefore(fieldInformation.identifier(), ".");
+                Field parentField = ReflectionUtil.getDeclaredField(config.getClass(), nestedIdentifier)
+                        .orElseThrow(() -> new NoSuchFieldException(fieldInformation.name()));
+                parentField.setAccessible(true);
+                Object nestedConfigObject = parentField.get(config);
+                setConfigField(
+                        nestedConfigObject,
+                        fieldInformation.withIdentifier(StringUtils.substringAfter(fieldInformation.identifier(), ".")),
+                        value
+                );
+            } else {
+                Field field = ReflectionUtil.getDeclaredField(config.getClass(), fieldInformation.name())
+                        .orElseThrow(() -> new NoSuchFieldException(fieldInformation.name()));
+                field.setAccessible(true);
+                field.set(config, ReflectionUtil.toObject(fieldInformation.type(), value));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
