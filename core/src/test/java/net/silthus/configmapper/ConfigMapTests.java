@@ -372,6 +372,25 @@ public class ConfigMapTests {
         }
     }
 
+    @Test
+    void loadWithPrivateClass() {
+
+        PrivateConfig cfg = new PrivateConfig();
+        PrivateConfig config = ConfigMap.of(cfg)
+                .with(of("test", 5))
+                .create();
+
+        assertThat(config).isNotNull()
+                .isEqualTo(cfg)
+                .extracting(privateConfig -> privateConfig.test)
+                .isEqualTo(5);
+    }
+
+    private static class PrivateConfig {
+        @ConfigOption
+        private int test = 1;
+    }
+
     public static class SamePositionConfig {
 
         @ConfigOption(position = 1)

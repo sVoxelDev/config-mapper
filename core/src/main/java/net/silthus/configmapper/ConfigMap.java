@@ -155,6 +155,10 @@ public class ConfigMap<TConfig> {
         return config;
     }
 
+    public TConfig apply() {
+        return create();
+    }
+
     public TConfig create() {
         try {
             if (instance() != null)
