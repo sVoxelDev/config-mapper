@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/Silthus/config-mapper/compare/v1.3.0...v1.3.1) (2021-10-08)
+
+
+### Bug Fixes
+
+* **release:** ensure jitpack jdk 16 ([f6b2f08](https://github.com/Silthus/config-mapper/commit/f6b2f08c0d7c07fd4048c4328d4a352d25238871))
+
 # [1.3.0](https://github.com/Silthus/config-mapper/compare/v1.2.2...v1.3.0) (2021-10-08)
 
 
