@@ -303,9 +303,23 @@ public class ConfigMapTests {
             assertThat(config.myEnum).isEqualTo(MyEnum.PROD);
         }
 
+        @Test
+        void loadEnumWithDefault() {
+
+            EnumTestConfigWithDefaults config = ConfigMap.of(EnumTestConfigWithDefaults.class)
+                    .applyTo(new EnumTestConfigWithDefaults());
+
+            assertThat(config.myEnum).isEqualTo(MyEnum.TEST);
+        }
+
         public static class EnumTestConfig {
             @ConfigOption
             private MyEnum myEnum;
+        }
+
+        public static class EnumTestConfigWithDefaults {
+            @ConfigOption
+            private MyEnum myEnum = MyEnum.TEST;
         }
 
         static enum MyEnum {
