@@ -17,38 +17,43 @@ import java.util.stream.Stream;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
-public class BukkitConfigMap extends ConfigMap {
+public class BukkitConfigMap<TConfig> extends ConfigMap<TConfig> {
 
-    public static BukkitConfigMap of(Class<?> configClass) throws ConfigurationException {
+    public static <TConfig> BukkitConfigMap<TConfig> of(Class<TConfig> configClass) throws ConfigurationException {
 
-        return of(ConfigUtil.getConfigFields(configClass));
+        return new BukkitConfigMap<>(configClass, ConfigUtil.getConfigFields(configClass));
     }
 
-    public static <TConfig> BukkitConfigMap of(Class<TConfig> configClass, Supplier<TConfig> supplier) throws ConfigurationException {
+    public static <TConfig> BukkitConfigMap<TConfig> of(Class<TConfig> configClass, Supplier<TConfig> supplier) throws ConfigurationException {
 
-        return of(ConfigUtil.getConfigFields(configClass, supplier.get()));
+        TConfig config = supplier.get();
+        return new BukkitConfigMap<>(config, ConfigUtil.getConfigFields(config));
     }
 
-    public static <TConfig> BukkitConfigMap of(TConfig config) throws ConfigurationException {
+    public static <TConfig> BukkitConfigMap<TConfig> of(TConfig config) throws ConfigurationException {
 
-        return of(ConfigUtil.getConfigFields(config));
+        return new BukkitConfigMap<>(config, ConfigUtil.getConfigFields(config));
     }
 
-    public static BukkitConfigMap of(Map<String, ConfigFieldInformation> configFields) {
-        return new BukkitConfigMap(configFields);
+    public static <TConfig> BukkitConfigMap<TConfig> of(Class<TConfig> configClass, Map<String, ConfigFieldInformation> configFields) {
+        return new BukkitConfigMap<>(configClass, configFields);
     }
 
-    protected BukkitConfigMap(Map<String, ConfigFieldInformation> configFields) {
-
-        super(configFields);
+    private BukkitConfigMap(TConfig config, Map<String, ConfigFieldInformation> configFields) {
+        super(config, configFields);
     }
 
-    public BukkitConfigMap(Map<String, ConfigFieldInformation> configFields, List<KeyValuePair> keyValuePairs) {
+    private BukkitConfigMap(Class<TConfig> configClass, Map<String, ConfigFieldInformation> configFields) {
 
-        super(configFields, keyValuePairs);
+        super(configClass, configFields);
     }
 
-    public BukkitConfigMap with(ConfigurationSection config) {
+    private BukkitConfigMap(Class<TConfig> configClass, Map<String, ConfigFieldInformation> configFields, List<KeyValuePair> keyValuePairs) {
+
+        super(configClass, configFields, keyValuePairs);
+    }
+
+    public BukkitConfigMap<TConfig> with(ConfigurationSection config) {
 
         Stream<KeyValuePair> configValues = config.getKeys(true).stream()
                 .map(s -> KeyValuePair.of(s, config.get(s)));
@@ -57,6 +62,6 @@ public class BukkitConfigMap extends ConfigMap {
                 .distinct()
                 .collect(Collectors.toList());
 
-        return new BukkitConfigMap(configFields(), values);
+        return (BukkitConfigMap<TConfig>) new BukkitConfigMap<>(configClass(), configFields(), values).instance(instance());
     }
 }

@@ -22,6 +22,7 @@ import lombok.experimental.Accessors;
 import lombok.experimental.NonFinal;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -44,20 +45,7 @@ import java.util.stream.Stream;
 @Value
 @NonFinal
 @Accessors(fluent = true)
-public class ConfigMap {
-
-    Map<String, ConfigFieldInformation> configFields;
-    List<KeyValuePair> keyValuePairs;
-
-    protected ConfigMap(Map<String, ConfigFieldInformation> configFields) {
-        this.configFields = Map.copyOf(configFields);
-        this.keyValuePairs = List.copyOf(new ArrayList<>());
-    }
-
-    protected ConfigMap(Map<String, ConfigFieldInformation> configFields, List<KeyValuePair> keyValuePairs) {
-        this.configFields = Map.copyOf(configFields);
-        this.keyValuePairs = List.copyOf(keyValuePairs);
-    }
+public class ConfigMap<TConfig> {
 
     /**
      * Tries to fetch all annotated config fields of the given class.
@@ -71,9 +59,9 @@ public class ConfigMap {
      * @throws ConfigurationException if the class cannot be instantiated (e.g. no public constructor)
      *                                or if a mapping failed
      */
-    public static ConfigMap of(Class<?> configClass) {
+    public static <TConfig> ConfigMap<TConfig> of(Class<TConfig> configClass) {
 
-        return of(ConfigUtil.getConfigFields(configClass));
+        return of(configClass, ConfigUtil.getConfigFields(configClass));
     }
 
     /**
@@ -88,9 +76,9 @@ public class ConfigMap {
      * @throws ConfigurationException if the config class contains invalid field mappings
      * @see ConfigMap#of(Class)
      */
-    public static <TConfig> ConfigMap of(Class<TConfig> configClass, Supplier<TConfig> supplier) {
+    public static <TConfig> ConfigMap<TConfig> of(Class<TConfig> configClass, Supplier<TConfig> supplier) {
 
-        return of(ConfigUtil.getConfigFields(configClass, supplier.get()));
+        return of(configClass, ConfigUtil.getConfigFields(configClass, supplier.get()));
     }
 
     /**
@@ -101,9 +89,9 @@ public class ConfigMap {
      * @param <TConfig> the type of the config
      * @return the config map for the given config object
      */
-    public static <TConfig> ConfigMap of(TConfig config) {
+    public static <TConfig> ConfigMap<TConfig> of(TConfig config) {
 
-        return of(ConfigUtil.getConfigFields(config));
+        return new ConfigMap<>(config, ConfigUtil.getConfigFields(config));
     }
 
     /**
@@ -114,8 +102,36 @@ public class ConfigMap {
      * @param configFields the field to config field information map
      * @return the config map that was created from the given config field map
      */
-    public static ConfigMap of(Map<String, ConfigFieldInformation> configFields) {
-        return new ConfigMap(configFields);
+    public static <TConfig> ConfigMap<TConfig> of(Class<TConfig> configClass, Map<String, ConfigFieldInformation> configFields) {
+        return new ConfigMap<>(configClass, configFields);
+    }
+
+    Class<TConfig> configClass;
+    Map<String, ConfigFieldInformation> configFields;
+    List<KeyValuePair> keyValuePairs;
+    @NonFinal TConfig instance;
+
+    @SuppressWarnings("unchecked")
+    protected ConfigMap(TConfig config, Map<String, ConfigFieldInformation> configFields) {
+        this((Class<TConfig>) config.getClass(), configFields);
+        this.instance = config;
+    }
+
+    protected ConfigMap(Class<TConfig> configClass, Map<String, ConfigFieldInformation> configFields) {
+        this.configClass = configClass;
+        this.configFields = Map.copyOf(configFields);
+        this.keyValuePairs = List.copyOf(new ArrayList<>());
+    }
+
+    protected ConfigMap(Class<TConfig> configClass, Map<String, ConfigFieldInformation> configFields, List<KeyValuePair> keyValuePairs) {
+        this.configClass = configClass;
+        this.configFields = Map.copyOf(configFields);
+        this.keyValuePairs = List.copyOf(keyValuePairs);
+    }
+
+    public ConfigMap<TConfig> instance(TConfig config) {
+        instance = config;
+        return this;
     }
 
     public Map<String, ConfigFieldInformation> configFields() {
@@ -133,25 +149,32 @@ public class ConfigMap {
         return !keyValuePairs().isEmpty();
     }
 
-    public <TConfig> TConfig applyTo(@NonNull TConfig config) throws ConfigurationException {
+    public TConfig applyTo(@NonNull TConfig config) throws ConfigurationException {
         if (!this.loaded()) return config;
         setConfigFields(config, ConfigUtil.loadConfigValues(configFields(), keyValuePairs()));
         return config;
     }
 
-    public <TConfig> TConfig create() {
-        return null;
+    public TConfig create() {
+        try {
+            if (instance() != null)
+                return applyTo(instance());
+            return applyTo(configClass().getConstructor().newInstance());
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new ConfigurationException("Unable to create instance of config class "
+                    + configClass.getCanonicalName() + ": " + e.getMessage(), e);
+        }
     }
 
-    public ConfigMap with(@NonNull Collection<KeyValuePair> pairs) {
+    public ConfigMap<TConfig> with(@NonNull Collection<KeyValuePair> pairs) {
 
         List<KeyValuePair> values = Stream.concat(keyValuePairs().stream(), pairs.stream())
                 .distinct()
                 .collect(Collectors.toList());
-        return new ConfigMap(configFields(), values);
+        return new ConfigMap<>(configClass(), configFields(), values).instance(instance());
     }
 
-    public ConfigMap with(@NonNull KeyValuePair... pairs) {
+    public ConfigMap<TConfig> with(@NonNull KeyValuePair... pairs) {
 
         return with(Arrays.asList(pairs));
     }

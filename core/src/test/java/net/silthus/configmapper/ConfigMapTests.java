@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static net.silthus.configmapper.KeyValuePair.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -18,7 +19,7 @@ public class ConfigMapTests {
     @DisplayName("apply ConfigMapt to object")
     class ConfigMapApplier {
 
-        private ConfigMap configMap;
+        private ConfigMap<ConfiguredObject> configMap;
 
         @SneakyThrows
         @BeforeEach
@@ -26,9 +27,9 @@ public class ConfigMapTests {
 
             configMap = ConfigMap.of(ConfiguredObject.class)
                     .with(
-                            KeyValuePair.of("test.required", 2),
-                            KeyValuePair.of("test.default_field", "foobar"),
-                            KeyValuePair.of("test.all_annotations", "5")
+                            of("test.required", 2),
+                            of("test.default_field", "foobar"),
+                            of("test.all_annotations", "5")
                     );
         }
 
@@ -37,11 +38,11 @@ public class ConfigMapTests {
         void shouldCombineMultipleKeyValuePairs() throws ConfigurationException {
 
             ConfigMap configMap = this.configMap.with(
-                    KeyValuePair.of("test.required", 2),
-                    KeyValuePair.of("test.default_field", "foobar"),
-                    KeyValuePair.of("test.all_annotations", "5")
+                    of("test.required", 2),
+                    of("test.default_field", "foobar"),
+                    of("test.all_annotations", "5")
             ).with(
-                    KeyValuePair.of("val1", "foobar")
+                    of("val1", "foobar")
             );
 
             assertThat(configMap.keyValuePairs().size())
@@ -55,8 +56,8 @@ public class ConfigMapTests {
 
             ConfiguredObject object = configMap
                     .with(
-                            KeyValuePair.of("val1", "bar"),
-                            KeyValuePair.of("val2", true)
+                            of("val1", "bar"),
+                            of("val2", true)
                     ).applyTo(new ConfiguredObject());
 
             assertThat(object)
@@ -92,13 +93,30 @@ public class ConfigMapTests {
 
             ConfiguredObject object = configMap
                     .with(
-                            KeyValuePair.of("ignored", "2.0")
+                            of("ignored", "2.0")
                     ).applyTo(new ConfiguredObject());
 
             assertThat(object)
                     .extracting(
                             ConfiguredObject::getIgnored
                     ).isEqualTo(1.0);
+        }
+
+        @Test
+        void createWithDefaultValueRequiredFields() {
+
+            TestConfig config = ConfigMap.of(TestConfig.class)
+                    .with(of("required", 1))
+                    .applyTo(new TestConfig());
+
+            assertThat(config).isNotNull()
+                    .extracting(
+                            TestConfig::getRequired,
+                            TestConfig::getAllAnnotations
+                    ).contains(
+                            1,
+                            2.0d
+                    );
         }
     }
 
@@ -256,7 +274,7 @@ public class ConfigMapTests {
         void shouldLoadPropertyFromBaseClass() {
 
             SubClass subClass = ConfigMap.of(SubClass.class)
-                    .with(KeyValuePair.of("duration", 30))
+                    .with(of("duration", 30))
                     .applyTo(new SubClass());
 
             assertThat(subClass.getDuration())
@@ -269,8 +287,8 @@ public class ConfigMapTests {
 
             SubClassWithParentFields cfg = ConfigMap.of(SubClassWithParentFields.class)
                     .with(
-                            KeyValuePair.of("sub.duration", 30),
-                            KeyValuePair.of("sub.annotated.foo", 100)
+                            of("sub.duration", 30),
+                            of("sub.annotated.foo", 100)
                     )
                     .applyTo(new SubClassWithParentFields());
 
@@ -288,7 +306,7 @@ public class ConfigMapTests {
         void loadConfigWithEnum() {
 
             EnumTestConfig config = ConfigMap.of(EnumTestConfig.class)
-                    .with(KeyValuePair.of("my_enum", "TEST"))
+                    .with(of("my_enum", "TEST"))
                     .applyTo(new EnumTestConfig());
 
             assertThat(config.myEnum).isEqualTo(MyEnum.TEST);
@@ -297,7 +315,7 @@ public class ConfigMapTests {
         @Test
         void loadConfigWithLowerCaseEnum() {
             EnumTestConfig config = ConfigMap.of(EnumTestConfig.class)
-                    .with(KeyValuePair.of("my_enum", "prod"))
+                    .with(of("my_enum", "prod"))
                     .applyTo(new EnumTestConfig());
 
             assertThat(config.myEnum).isEqualTo(MyEnum.PROD);
@@ -328,13 +346,29 @@ public class ConfigMapTests {
         }
     }
 
+    @Nested
+    @DisplayName("with auto instance")
     class WithAutoInstance {
 
         @Test
         void createInstanceAutomatically() {
 
-            ConfigMap.of(TestConfig.class)
+            TestConfig config = ConfigMap.of(TestConfig.class)
                     .create();
+
+            assertThat(config).isNotNull();
+        }
+
+        @Test
+        void createAutoInstance_withConfig() {
+
+            TestConfig config = ConfigMap.of(TestConfig.class)
+                    .with(
+                            of("required", 5)
+                    ).create();
+            assertThat(config).isNotNull()
+                    .extracting(TestConfig::getRequired)
+                    .isEqualTo(5);
         }
     }
 
