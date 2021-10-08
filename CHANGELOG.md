@@ -1,3 +1,10 @@
+## [1.3.5](https://github.com/Silthus/config-mapper/compare/v1.3.4...v1.3.5) (2021-10-08)
+
+
+### Bug Fixes
+
+* **release:** run explicit gradle build task ([b2f5131](https://github.com/Silthus/config-mapper/commit/b2f513169aefd6033061835e371b12379d04a77f))
+
 ## [1.3.4](https://github.com/Silthus/config-mapper/compare/v1.3.3...v1.3.4) (2021-10-08)
 
 
