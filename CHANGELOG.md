@@ -1,3 +1,10 @@
+## [1.3.6](https://github.com/Silthus/config-mapper/compare/v1.3.5...v1.3.6) (2021-10-08)
+
+
+### Bug Fixes
+
+* **release:** change task to publishToMavenLocal ([4293cec](https://github.com/Silthus/config-mapper/commit/4293cec1465be8df72f6684833e055861beafd85))
+
 ## [1.3.5](https://github.com/Silthus/config-mapper/compare/v1.3.4...v1.3.5) (2021-10-08)
 
 
