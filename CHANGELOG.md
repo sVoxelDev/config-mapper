@@ -1,3 +1,15 @@
+# [1.5.0](https://github.com/Silthus/config-mapper/compare/v1.4.0...v1.5.0) (2021-10-08)
+
+
+### Bug Fixes
+
+* default required fields throw ([84ccb74](https://github.com/Silthus/config-mapper/commit/84ccb7471f66150864ce2733f15ba2a449de08a3))
+
+
+### Features
+
+* add option to directly create config from class ([cfdc352](https://github.com/Silthus/config-mapper/commit/cfdc35251ad4fd0cbc5a860c3d47a693b2719ef2))
+
 # [1.4.0](https://github.com/Silthus/config-mapper/compare/v1.3.6...v1.4.0) (2021-10-08)
 
 
