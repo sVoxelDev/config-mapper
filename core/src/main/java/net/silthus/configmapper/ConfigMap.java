@@ -144,13 +144,7 @@ public class ConfigMap<TConfig> {
         return List.copyOf(keyValuePairs);
     }
 
-    public boolean loaded() {
-
-        return !keyValuePairs().isEmpty();
-    }
-
     public TConfig applyTo(@NonNull TConfig config) throws ConfigurationException {
-        if (!this.loaded()) return config;
         setConfigFields(config, ConfigUtil.loadConfigValues(configFields(), keyValuePairs()));
         return config;
     }
