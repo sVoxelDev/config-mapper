@@ -7,10 +7,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import static net.silthus.configmapper.KeyValuePair.of;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.*;
 
 @SuppressWarnings("ALL")
 public class ConfigMapTests {
@@ -117,6 +119,39 @@ public class ConfigMapTests {
                             1,
                             2.0d
                     );
+        }
+
+        @Test
+        void createWithDefaultValues_andNonPrimitives() {
+            List<String> strings = List.of("test", "foo", "bar");
+            ComplexTypes config = ConfigMap.of(ComplexTypes.class)
+                    .with(of("my_list", strings))
+                    .apply();
+
+            assertThat(config)
+                    .extracting(cfg -> cfg.myList)
+                    .isNotNull()
+                    .isEqualTo(strings);
+        }
+
+        @Test
+        void createWithCollection_noDefault() {
+            CollectionConfig config = ConfigMap.of(new CollectionConfig())
+                    .with(of("map", Map.of("test", new ComplexTypes())))
+                    .apply();
+
+            assertThat(config.map).containsKey("test");
+        }
+
+        public static class ComplexTypes {
+
+            @ConfigOption
+            private List<String> myList = new ArrayList<>();
+        }
+
+        public static class CollectionConfig {
+            @ConfigOption
+            private Map<String, ComplexTypes> map;
         }
     }
 

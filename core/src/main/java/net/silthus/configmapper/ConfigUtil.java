@@ -84,7 +84,10 @@ public final class ConfigUtil {
                 if (field.getType().isPrimitive()
                         ||field.getType().isEnum()
                         || field.getType().equals(String.class)
-                        || field.getType().isArray()) {
+                        || field.getType().isArray()
+                        || Collection.class.isAssignableFrom(field.getType())
+                        || Map.class.isAssignableFrom(field.getType())
+                ) {
 
                     String[] description = configOption.map(ConfigOption::description).orElse(new String[0]);
                     Boolean required = configOption.map(ConfigOption::required).orElse(false);
@@ -108,7 +111,11 @@ public final class ConfigUtil {
                             defaultValue
                     ));
                 } else {
-                    fields.putAll(getConfigFields(identifier + ".", field.getType(), field.getType().getConstructor().newInstance(), formatter));
+                    field.setAccessible(true);
+                    Object defaultValue = field.get(configInstance);
+                    if (defaultValue == null)
+                        defaultValue = field.getType().getConstructor().newInstance();
+                    fields.putAll(getConfigFields(identifier + ".", field.getType(), defaultValue, formatter));
                 }
             }
 
