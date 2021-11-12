@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/Silthus/config-mapper/compare/v1.5.0...v1.6.0) (2021-11-12)
+
+
+### Features
+
+* add support for collection and map fields ([0717af1](https://github.com/Silthus/config-mapper/commit/0717af19198501e37cdfe21ef434ead128d23a4c))
+
 # [1.5.0](https://github.com/Silthus/config-mapper/compare/v1.4.0...v1.5.0) (2021-10-08)
 
 
