@@ -1,3 +1,10 @@
+## [1.6.1](https://github.com/Silthus/config-mapper/compare/v1.6.0...v1.6.1) (2021-11-12)
+
+
+### Bug Fixes
+
+* always apply config do not check load status ([efa9300](https://github.com/Silthus/config-mapper/commit/efa930006de1e64f450d283e0da9f50cbe65f004))
+
 # [1.6.0](https://github.com/Silthus/config-mapper/compare/v1.5.0...v1.6.0) (2021-11-12)
 
 
